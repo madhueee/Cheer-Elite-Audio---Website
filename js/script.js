@@ -1,7 +1,7 @@
 ﻿
 
 const EMAILJS_CONFIG = {
-  publicKey:  'CPnAENEggkppbktwg',
+  publicKey: window.__ENV__?.EMAILJS_KEY || '',
   serviceId:  'service_roiuayd',
   templateContact: 'template_kitsbc8',
   templateReply:   '',

@@ -13,7 +13,7 @@ import {
 
 // ── Firebase config ──────────────────────────────────
 const firebaseConfig = {
-  apiKey:            "AIzaSyDwDS1RecOobP17YmUmQt5xcK_lofiyhSE",
+  apiKey: window.__ENV__?.FIREBASE_API_KEY || '',
   authDomain:        "cheer-elite-audio-chat-system.firebaseapp.com",
   projectId:         "cheer-elite-audio-chat-system",
   storageBucket:     "cheer-elite-audio-chat-system.firebasestorage.app",
