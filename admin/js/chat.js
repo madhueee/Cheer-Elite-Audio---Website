@@ -689,7 +689,7 @@ function ensureScrollToLatestBtn() {
       <polyline points="6 9 12 15 18 9"/>
     </svg>`;
   btn.style.cssText = `
-    position:fixed; left:75%; bottom:80px;
+    position:fixed; left:50%; transform:translateX(-50%);
     bottom:110px;
     width:36px; height:36px; border-radius:50%;
     background:var(--teal,#00E5C3); border:none; cursor:pointer;
@@ -703,14 +703,23 @@ function ensureScrollToLatestBtn() {
   });
 
   // Attach to reply-bar so it floats centered above it
-  const chatPanel = $('chat-panel');
+const chatPanel = $('chat-panel');
   if (chatPanel) {
-      chatPanel.style.position = 'relative';
-      chatPanel.appendChild(btn);
+    chatPanel.appendChild(btn);
   }
+
+  // Center button on chat panel, stays fixed on scroll
+  function repositionBtn() {
+    const panel = $('chat-panel');
+    if (!panel || !btn) return;
+    const rect = panel.getBoundingClientRect();
+    btn.style.left = (rect.left + rect.width / 2) + 'px';
+  }
+  repositionBtn();
+  window.addEventListener('resize', repositionBtn);
+
   return btn;
 }
-
 function initScrollToLatest() {
   const area = $('messages-area');
   if (!area) return;
