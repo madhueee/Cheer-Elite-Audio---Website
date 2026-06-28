@@ -728,7 +728,16 @@ function initScrollToLatest() {
   area.addEventListener('scroll', () => {
     const distFromBottom = area.scrollHeight - area.scrollTop - area.clientHeight;
     const shouldShow = distFromBottom > 120;
-    btn.style.display = shouldShow ? 'flex' : 'none';
+    if (shouldShow) {
+      const panel = $('chat-panel');
+      if (panel) {
+        const rect = panel.getBoundingClientRect();
+        btn.style.left = (rect.left + rect.width / 2) + 'px';
+      }
+      btn.style.display = 'flex';
+    } else {
+      btn.style.display = 'none';
+    }
   });
 }
 
