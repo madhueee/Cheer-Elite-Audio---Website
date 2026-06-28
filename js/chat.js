@@ -11,6 +11,10 @@ import {
   onSnapshot, query, orderBy, serverTimestamp, updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+const esc = str => String(str || '')
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+  .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
 // ── Firebase config ──────────────────────────────────
 const firebaseConfig = {
   apiKey:            window.__ENV__?.FIREBASE_API_KEY || '',
@@ -412,7 +416,7 @@ function setReply(docId, data) {
   bar.innerHTML = `
     <div style="width:3px;height:32px;background:#00E5C3;border-radius:2px;flex-shrink:0;"></div>
     <div style="flex:1;overflow:hidden;">
-      <div style="font-size:10px;font-weight:700;color:#00E5C3;margin-bottom:2px;">${replyingTo.senderName}</div>
+      <div style="font-size:10px;font-weight:700;color:#00E5C3;margin-bottom:2px;">${esc(replyingTo.senderName)}</div>
       <div style="font-size:12px;color:rgba(238,244,247,0.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${previewText || '📎 Attachment'}</div>
     </div>
     <button id="cw-reply-cancel" type="button" style="background:none;border:none;color:rgba(238,244,247,0.4);font-size:18px;cursor:pointer;padding:4px;line-height:1;">&times;</button>
@@ -692,8 +696,9 @@ function subscribeMessages() {
     if (isOpen) {
       const adminMsgs = snap.docs.filter(d => d.data().sender === 'admin' && !d.data().seenByClient);
       if (adminMsgs.length > 0) {
-        const last = adminMsgs[adminMsgs.length - 1];
-        updateDoc(last.ref, { seenByClient: true }).catch(console.error);
+        adminMsgs.forEach(d => {
+          updateDoc(d.ref, { seenByClient: true }).catch(console.error);
+        });
       }
     }
 
@@ -817,8 +822,8 @@ function renderBubble(data, docId) {
       : (data.replyTo.text || '📎 Attachment');
     rp.innerHTML = `
       <div style="overflow:hidden;">
-        <div style="font-size:10px;font-weight:700;color:#00E5C3;margin-bottom:2px;">${data.replyTo.senderName || 'Message'}</div>
-        <div style="font-size:12px;color:rgba(238,244,247,0.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${quotedText}</div>
+        <div style="font-size:10px;font-weight:700;color:#00E5C3;margin-bottom:2px;">${esc(data.replyTo.senderName) || 'Message'}</div>
+        <div style="font-size:12px;color:rgba(238,244,247,0.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(quotedText)}</div>
       </div>
     `;
     // FEATURE 5b: Tap to scroll to the original message
@@ -844,7 +849,7 @@ function renderBubble(data, docId) {
 
     formWrap.innerHTML = `
       <div style="font-size:11px;font-weight:700;color:#00E5C3;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">
-        📋 Order Form · Mix ${data.orderNumber}
+        Order Form · Mix ${esc(data.orderNumber)}
       </div>
       ${alreadySubmitted ? `<div style="font-size:13px;color:#00E5C3;font-weight:600;">Form submitted!</div>` : `
       <div style="display:flex;flex-direction:column;gap:10px;">
@@ -1010,7 +1015,7 @@ function renderBubble(data, docId) {
         <circle cx="4" cy="13" r="1.5" fill="currentColor"/>
         <circle cx="12" cy="11" r="1.5" fill="currentColor"/>
       </svg>
-      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${data.trackName || 'Track'}</span>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(data.trackName) || 'Track'}</span>
       <span style="font-size:10px;background:rgba(0,229,195,0.15);color:#00E5C3;padding:2px 6px;border-radius:6px;font-weight:700;flex-shrink:0;">${data.version || 'v1'}</span>
     `;
     card.appendChild(header);

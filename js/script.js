@@ -121,7 +121,14 @@ function initHeroCanvas() {
 
     animId = requestAnimationFrame(draw);
   }
-
+  const observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+      animId = requestAnimationFrame(draw);
+    } else {
+      cancelAnimationFrame(animId);
+    }
+  }, { threshold: 0 });
+  observer.observe(canvas);
   resize();
   draw();
   window.addEventListener('resize', () => { cancelAnimationFrame(animId); resize(); draw(); });
