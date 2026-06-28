@@ -6,12 +6,12 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: window.__ENV__?.FIREBASE_API_KEY || '',
-  authDomain:        "cheer-elite-audio-chat-system.firebaseapp.com",
-  projectId:         "cheer-elite-audio-chat-system",
-  storageBucket:     "cheer-elite-audio-chat-system.firebasestorage.app",
-  messagingSenderId: "445444846916",
-  appId:             "1:445444846916:web:a9c0a6c9969ddd70489311"
+  apiKey:            window.__ENV__?.FIREBASE_API_KEY || '',
+  authDomain:        window.__ENV__?.FIREBASE_AUTH_DOMAIN || '',
+  projectId:         window.__ENV__?.FIREBASE_PROJECT_ID || '',
+  storageBucket:     window.__ENV__?.FIREBASE_STORAGE_BUCKET || '',
+  messagingSenderId: window.__ENV__?.FIREBASE_MESSAGING_SENDER || '',
+  appId:             window.__ENV__?.FIREBASE_APP_ID || '',
 };
 
 const app  = initializeApp(firebaseConfig, 'admin-app');
@@ -33,9 +33,18 @@ onAuthStateChanged(auth, user => {
 loginBtn.addEventListener('click', doLogin);
 adminPassInp.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
+let loginAttempts = 0;
+const MAX_ATTEMPTS = 5;
+
 async function doLogin() {
+  if (loginAttempts >= MAX_ATTEMPTS) {
+    loginError.textContent = 'Too many attempts. Please wait before trying again.';
+    loginError.style.display = 'block';
+    return;
+  }
   const email = adminEmailInp.value.trim();
   const pass  = adminPassInp.value;
+
   loginError.style.display = 'none';
 
   if (!email && !pass) {
@@ -61,10 +70,13 @@ async function doLogin() {
   try {
     await signInWithEmailAndPassword(auth, email, pass);
   } catch {
+    loginAttempts++; 
     loginError.style.display = 'block';
     loginBtn.disabled    = false;
     loginBtn.textContent = 'Sign In';
-    loginError.textContent = 'Wrong email or password. Try again.';
+    loginError.textContent = loginAttempts >= MAX_ATTEMPTS
+    ? 'Too many failed attempts. Please wait.'
+    : 'Wrong email or password. Try again.';
   }
 }
 

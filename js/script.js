@@ -8,10 +8,10 @@ const EMAILJS_CONFIG = {
 };
 
 const TRACK_SRCS = [
-  'assets/audio/ssstik.io_1779969184615.mp3',
-  'assets/audio/ssstik.io_1779969217264.mp3',
-  'assets/audio/ssstik.io_1779969253697.mp3',
-  'assets/audio/ssstik.io_1779969338549.mp3',
+  'assets/audio/mix01.mp3',
+  'assets/audio/mix02.mp3',
+  'assets/audio/mix03.mp3',
+  'assets/audio/mix04.mp3',
 ];
 
 const $ = (s, ctx = document) => ctx.querySelector(s);
@@ -338,7 +338,25 @@ function initContactForm() {
     }
 
     const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-    const knownDomains = ['gmail.com','yahoo.com','hotmail.com','outlook.com','icloud.com','me.com','live.com'];
+    const knownDomains = [
+      // Google
+      'gmail.com', 'googlemail.com',
+      // Microsoft
+      'outlook.com', 'hotmail.com', 'hotmail.co.uk', 'live.com', 'live.co.uk', 'msn.com',
+      // Apple
+      'icloud.com', 'me.com', 'mac.com',
+      // Yahoo
+      'yahoo.com', 'yahoo.co.uk', 'yahoo.com.ph', 'ymail.com',
+      // Other common
+      'protonmail.com', 'proton.me', 'aol.com', 'zoho.com',
+      'mail.com', 'gmx.com', 'gmx.net',
+      // Philippines-specific
+      'yahoo.com.ph',
+      // School / org
+      'edu.ph', 'com.ph', 'org.ph',
+      // Business common
+      'business.com',
+    ];
 
     if (!email.el.value.trim()) {
       email.el.classList.add('error');
