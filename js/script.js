@@ -356,6 +356,7 @@ function initContactForm() {
         ok = false;
       }
     }
+    return ok;
   };
   Object.values(fields).forEach(({ el, err }) => {
     el.addEventListener('blur', () => {

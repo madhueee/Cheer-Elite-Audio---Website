@@ -7,7 +7,7 @@ import { startListeningToOrders }         from './orders.js';
 import { loadDeliveries }                 from './deliveries.js';
 import {
   collection, doc, addDoc, getDoc, updateDoc, setDoc,
-  onSnapshot, query, orderBy, where, serverTimestamp
+  onSnapshot, query, orderBy, where, serverTimestamp, deleteField
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // ── Cloudinary config ─────────────────────────────────
@@ -175,7 +175,6 @@ export function initSearch() {
 /* ── Open chat ──────────────────────────────────────────── */
 export async function openChat(chat) {
   state.activeChatId = chat.id;
-  startListeningToClientTyping(chat.id);
 
   startListeningToOrders(chat.id);
 
@@ -298,7 +297,7 @@ export function closeChat() {
   if (state.activeChatId) {
     setAdminTyping(false);
   }
-  clearTimeout(typingTimeout);
+  clearTimeout(adminTypingTimeout); 
   stopListeningToClientTyping();
 
   state.activeChatId = null;
@@ -654,9 +653,16 @@ async function sendReaction(msgId, emoji) {
     // Check if admin already reacted with this same emoji (toggle off)
     const alreadyReacted = currentReactions[emoji]?.[myId];
 
-    if (!alreadyReacted) {
-      // Set only this emoji, removing all others
-      updated[emoji] = { [myId]: true };
+    if (alreadyReacted) {
+      // Toggle off — remove just this admin's vote on this emoji
+      await updateDoc(msgRef, {
+        [`reactions.${emoji}.${myId}`]: deleteField()
+      });
+    } else {
+      // Add reaction without touching others
+      await updateDoc(msgRef, {
+        [`reactions.${emoji}.${myId}`]: true
+      });
     }
     // If alreadyReacted, updated stays {} which clears everything
 
