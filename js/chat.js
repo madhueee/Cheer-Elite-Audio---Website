@@ -1187,9 +1187,10 @@ function renderBubble(data, docId) {
       if (!isClient) {
         const nameEl = document.createElement('div');
         nameEl.style.cssText = 'font-size:10px;font-weight:700;color:#00E5C3;margin-bottom:3px;';
-        nameEl.textContent = data.senderName && data.senderName !== 'Support'
-          ? data.senderName
-          : 'Cheer Elite Audio';
+        nameEl.textContent = data.senderName !== 'Support' && data.senderName
+                ? data.senderName
+                : '';
+      if (!nameEl.textContent) wrap.removeChild(nameEl);
         wrap.appendChild(nameEl);
       }
       const bubble = document.createElement('div');
