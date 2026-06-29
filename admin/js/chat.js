@@ -489,7 +489,7 @@ function renderMessage(data, msgId) {
     }
     wrap.innerHTML = `
       <div class="msg-bubble-col">
-        <div class="msg-sender">You (Admin)</div>
+        <div class="msg-sender">${escHtml(senderLabel)}</div>
         ${replyHTML}
         <div class="payment-bubble">
           <div class="payment-bubble-header">

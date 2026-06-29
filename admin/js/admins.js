@@ -19,6 +19,8 @@ export async function loadAdminProfile(user) {
 
   state.adminPhoto = profile.photo || '';
 
+  state.adminName = name; // ← add this
+
   const photo   = profile.photo || '';
   const role    = profile.role  || 'admin';
 
